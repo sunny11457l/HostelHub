@@ -1,0 +1,24 @@
+@import "tailwindcss";
+
+@theme {
+  --color-console: #0f172a;
+  --color-console-edge: #1e293b;
+  --color-teal2: #14b8a6;
+  --color-field: #f8fafc;
+  --font-display: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --font-mono2: "IBM Plex Mono", ui-monospace, monospace;
+}
+
+body {
+  font-family: var(--font-display);
+  background: var(--color-field);
+  color: #0f172a;
+}
+
+.mono { font-family: var(--font-mono2); }
+
+.spine { border-left-width: 4px; border-left-style: solid; }
+.spine-resolved { border-left-color: #10b981; }
+.spine-assigned, .spine-in-progress, .spine-reopened { border-left-color: #f59e0b; }
+.spine-escalated { border-left-color: #ef4444; }
+.spine-open { border-left-color: #94a3b8; }
