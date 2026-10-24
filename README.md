@@ -164,6 +164,10 @@ Live links: backend — [add URL] · frontend — [add URL]
 - Frontend handles loading/empty/error/success states; live countdown chips;
   toasts on every mutation; 401 auto-logout.
 
+- **Announcement board** — wardens broadcast (pinnable) notices every student sees.
+- **Ticket CSV export** — the full ledger, one click, spreadsheet-ready.
+- **Satisfaction analytics** — average rating per category on top of resolution speed.
+
 ## Roadmap
 
 - Staff accounts with their own queues.

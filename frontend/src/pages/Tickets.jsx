@@ -1,6 +1,24 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import client from '../api/client.js';
+
+function Announcements() {
+  const isStaff = false;
+  const [announcements, setAnnouncements] = useState(null);
+  useEffect(() => { client.get('/announcements').then((r) => setAnnouncements(r.data)).catch(() => {}); }, []);
+  if (!announcements?.length) return null;
+  return (
+    <div className="mb-6 space-y-2">
+      {announcements.slice(0, 2).map((a) => (
+        <div key={a._id} className={`rounded-2xl border p-4 ${a.pinned ? 'border-teal2/40 bg-teal2/10' : 'border-slate-200 bg-white'}`}>
+          <p className="font-bold">{a.pinned ? '📌 ' : '📢 '}{a.title}</p>
+          <p className="text-sm text-slate-600">{a.body}</p>
+          <p className="mt-1 text-xs text-slate-400">— {a.byName}</p>
+        </div>
+      ))}
+    </div>
+  );
+}
 import { Loading, Empty, ErrorState } from '../components/states.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useToast } from '../context/ToastContext.jsx';
@@ -65,6 +83,7 @@ export default function Tickets() {
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-8">
+      <Announcements />
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-extrabold">{isStaff ? 'All tickets' : 'Your tickets'}</h1>
@@ -77,6 +96,10 @@ export default function Tickets() {
           </select>
           {user?.role === 'student' && (
             <button onClick={() => setShowNew(true)} className="rounded-xl bg-console px-5 py-2 text-sm font-extrabold text-white hover:bg-slate-800">+ Raise ticket</button>
+          )}
+          {isStaff && (
+            <a href={`${import.meta.env.VITE_API_URL || 'http://localhost:5105/api'}/admin/tickets.csv`} target="_blank" rel="noreferrer"
+              className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-bold hover:border-teal2">⬇ CSV</a>
           )}
         </div>
       </div>

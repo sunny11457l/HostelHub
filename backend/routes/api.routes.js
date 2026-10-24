@@ -3,6 +3,7 @@ const rateLimit = require('express-rate-limit');
 const a = require('../controllers/auth.controller');
 const t = require('../controllers/ticket.controller');
 const n = require('../controllers/notification.controller');
+const extra = require('../controllers/extra.controller');
 const upload = require('../utils/upload');
 const { requireAuth } = require('../middlewares/auth');
 
@@ -22,6 +23,11 @@ router.post('/tickets/:id/comments', t.comment);
 router.post('/tickets/:id/reopen', t.reopen);
 router.post('/tickets/:id/feedback', t.feedback);
 router.get('/admin/stats', t.adminStats);
+router.get('/admin/tickets.csv', extra.ticketsCsv);
+router.get('/admin/satisfaction', extra.satisfaction);
+router.post('/announcements', extra.announce);
+router.get('/announcements', extra.listAnnouncements);
+router.delete('/announcements/:id', extra.removeAnnouncement);
 router.get('/notifications', n.listMine);
 router.post('/notifications/read', n.markRead);
 router.post('/jobs/run-sla', async (req, res, next) => {
