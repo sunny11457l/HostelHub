@@ -4,19 +4,29 @@
   --color-console: #0f172a;
   --color-console-edge: #1e293b;
   --color-teal2: #14b8a6;
-  --color-field: #f8fafc;
+  --color-field: #f1f5f9;
   --font-display: "Manrope", ui-sans-serif, system-ui, sans-serif;
   --font-mono2: "IBM Plex Mono", ui-monospace, monospace;
 }
 
-body {
-  font-family: var(--font-display);
-  background: var(--color-field);
-  color: #0f172a;
-}
-
+body { font-family: var(--font-display); background: var(--color-field); color: #0f172a; min-height: 100vh; }
 .mono { font-family: var(--font-mono2); }
 
+@keyframes floatY { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+@keyframes marquee { to { transform: translateX(-50%); } }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(26px); } to { opacity: 1; transform: none; } }
+@keyframes scanline { 0% { top: -10%; } 100% { top: 110%; } }
+@keyframes blink2 { 0%,100% { opacity: 1; } 50% { opacity: .3; } }
+
+.reveal > * { opacity: 0; animation: fadeUp .8s cubic-bezier(.2,.7,.3,1) forwards; }
+.reveal > *:nth-child(1) { animation-delay: .05s } .reveal > *:nth-child(2) { animation-delay: .15s }
+.reveal > *:nth-child(3) { animation-delay: .25s } .reveal > *:nth-child(4) { animation-delay: .35s }
+
+.float { animation: floatY 5s ease-in-out infinite; }
+.marquee { display: flex; width: max-content; animation: marquee 28s linear infinite; }
+.hover-lift { transition: transform .3s cubic-bezier(.2,.7,.3,1), box-shadow .3s; }
+.hover-lift:hover { transform: translateY(-6px); box-shadow: 0 20px 40px -18px rgba(20,184,166,.4); }
+.blink-dot { animation: blink2 1.6s ease-in-out infinite; }
 .spine { border-left-width: 4px; border-left-style: solid; }
 .spine-resolved { border-left-color: #10b981; }
 .spine-assigned, .spine-in-progress, .spine-reopened { border-left-color: #f59e0b; }
