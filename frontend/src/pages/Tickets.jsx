@@ -9,6 +9,7 @@ function Announcements() {
   if (!announcements?.length) return null;
   return (
     <div className="mb-6 space-y-2">
+      <SceneBackground />
       {announcements.slice(0, 2).map((a) => (
         <div key={a._id} className={`rounded-2xl border p-4 ${a.pinned ? 'border-teal2/40 bg-teal2/10' : 'border-slate-200 bg-white'}`}>
           <p className="font-bold">{a.pinned ? '📌 ' : '📢 '}{a.title}</p>
@@ -22,6 +23,7 @@ function Announcements() {
 import { Loading, Empty, ErrorState } from '../components/states.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useToast } from '../context/ToastContext.jsx';
+import SceneBackground from '../components/SceneBackground.jsx';
 
 const CATEGORIES = ['plumbing', 'electrical', 'carpentry', 'cleanliness', 'wifi', 'other'];
 const STATUSES = ['', 'open', 'assigned', 'in-progress', 'resolved', 'escalated', 'reopened'];
@@ -82,7 +84,7 @@ export default function Tickets() {
   const columns = ['open', 'assigned', 'in-progress', 'resolved', 'escalated'];
 
   return (
-    <main className="mx-auto max-w-6xl px-4 py-8">
+    <main className="relative mx-auto max-w-6xl px-4 py-8">
       <Announcements />
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>

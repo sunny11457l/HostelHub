@@ -65,3 +65,8 @@ body { font-family: var(--font-display); background: var(--color-field); color: 
 .blob { opacity: .6 !important; filter: blur(100px) saturate(1.5) !important; }
 .stagger > * { transition-delay: calc(var(--i, 0) * 60ms); }
 
+
+@keyframes orbFloat {
+  from { transform: translate(0, 0) scale(1); }
+  to { transform: translate(40px, -30px) scale(1.15); }
+}

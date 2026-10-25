@@ -4,6 +4,7 @@ import client, { API_ROOT } from '../api/client.js';
 import { Loading, ErrorState } from '../components/states.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useToast } from '../context/ToastContext.jsx';
+import SceneBackground from '../components/SceneBackground.jsx';
 
 function timeLeft(deadline) {
   const ms = new Date(deadline) - Date.now();
@@ -42,7 +43,12 @@ export default function TicketDetail() {
     }
   }
 
-  if (error) return <main className="mx-auto max-w-4xl px-4 py-10"><ErrorState message={error} onRetry={load} /></main>;
+  if (error) return (
+    <div className="relative min-h-screen">
+      <SceneBackground />
+      <main className="relative mx-auto max-w-4xl px-4 py-10"><ErrorState message={error} onRetry={load} /></main>
+    </div>
+  );
   if (!ticket) return <Loading label="Opening ticket…" />;
 
   const sla = ticket.slaDeadline && !['resolved'].includes(ticket.status) ? timeLeft(ticket.slaDeadline) : null;
@@ -50,7 +56,9 @@ export default function TicketDetail() {
   const canReopen = isOwner && ticket.status === 'resolved' && ticket.resolvedAt && Date.now() - new Date(ticket.resolvedAt) < 72 * 3600000;
 
   return (
-    <main className="mx-auto max-w-4xl px-4 py-8">
+    <div className="relative min-h-screen">
+      <SceneBackground />
+      <main className="relative mx-auto max-w-4xl px-4 py-8">
       <Link to="/tickets" className="text-sm font-bold text-slate-400 hover:text-teal2">← All tickets</Link>
       <div className="mt-3 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
         <div className={`spine spine-${ticket.status} p-6`}>
@@ -151,5 +159,6 @@ export default function TicketDetail() {
         </section>
       </div>
     </main>
+    </div>
   );
 }
