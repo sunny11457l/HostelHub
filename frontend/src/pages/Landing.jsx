@@ -35,13 +35,13 @@ export default function Landing() {
               keeps a public status timeline.
             </p>
             <div className="mt-9 flex flex-wrap gap-3">
-              <Link to="/register" className="hover-lift rounded-full bg-teal2 px-8 py-4 font-extrabold text-console shadow-xl shadow-teal-500/30">Student sign-up →</Link>
-              <Link to="/login" className="rounded-full border border-slate-700 px-8 py-4 font-extrabold text-slate-200 hover:border-teal2">Warden login</Link>
+              <Link to="/register" className="btn-3d hover-lift rounded-full bg-teal2 px-8 py-4 font-extrabold text-console shadow-xl shadow-teal-500/30">Student sign-up →</Link>
+              <Link to="/login" className="btn-3d rounded-full border border-slate-700 px-8 py-4 font-extrabold text-slate-200 hover:border-teal2">Warden login</Link>
             </div>
           </div>
 
           {/* live console card */}
-          <div className="relative overflow-hidden rounded-3xl border border-slate-800 bg-slate-900/80 shadow-2xl">
+          <div className="float-3d relative overflow-hidden rounded-3xl border border-slate-800 bg-slate-900/80 shadow-2xl">
             <div className="flex items-center gap-2 border-b border-slate-800 px-5 py-3">
               <span className="h-3 w-3 rounded-full bg-red-400/70" /><span className="h-3 w-3 rounded-full bg-amber-400/70" /><span className="h-3 w-3 rounded-full bg-green-400/70" />
               <span className="mono ml-3 text-[11px] text-slate-500">hostelhub · sla-monitor</span>
