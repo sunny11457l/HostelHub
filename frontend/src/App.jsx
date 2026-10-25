@@ -6,6 +6,7 @@ import AppShell from './components/AppShell.jsx';
 import Tickets from './pages/Tickets.jsx';
 import TicketDetail from './pages/TicketDetail.jsx';
 import NotFound from './pages/NotFound.jsx';
+import Guide from './pages/Guide.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
 
 export default function App() {
@@ -21,6 +22,7 @@ export default function App() {
           <Route path="/admin" element={<Navigate to="/tickets" replace />} />
         </Route>
       </Route>
+      <Route path="/guide" element={<Guide />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
