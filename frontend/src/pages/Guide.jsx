@@ -1,7 +1,7 @@
 import SceneBackground from '../components/SceneBackground.jsx';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
-import Navbar from '../components/Navbar.jsx';
+import AppShell from '../components/AppShell.jsx';
 
 const STEPS = [
     ['1', 'Raise a ticket', 'Tickets → + Raise ticket. Pick a category — priority is auto-suggested (plumbing → high). Add a photo if helpful.'],
@@ -16,7 +16,7 @@ export default function Guide() {
   return (
     <div className="relative min-h-screen">
       <SceneBackground />
-      <Navbar />
+      <AppShell />
       <main className="relative mx-auto max-w-3xl px-4 py-12">
         <p className="text-xs font-bold uppercase tracking-[0.35em] opacity-60">1-minute guide</p>
         <h1 className="mt-2 text-4xl font-bold tracking-tight sm:text-5xl">
