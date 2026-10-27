@@ -10,7 +10,7 @@ app.use(express.json({ limit: '1mb' }));
 app.use(
   cors({
     origin: (origin, cb) => {
-      const allowed = [env.CLIENT_ORIGIN, 'http://localhost:5305', 'http://127.0.0.1:5305'];
+      const allowed = [env.CLIENT_ORIGIN, 'http://localhost:5305', 'http://127.0.0.1:5305', 'https://hostel-o5o0vt1mg-sunny14.vercel.app'];
       if (!origin || allowed.includes(origin)) return cb(null, true);
       cb(new Error('Origin not allowed by CORS'));
     },
