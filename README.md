@@ -267,7 +267,9 @@ open http://localhost:5305
 | 🔑 Warden | `warden@demo.com` | `Demo@1234` | Full kanban + assign |
 | ⚙️ Admin | `admin@demo.com` | `Demo@1234` | System settings |
 
----
+---## 🎥 Demo Video
+
+[Watch the HostelHub Presentation](https://drive.google.com/file/d/13a3aj7F4FnafCyck_VsxwshzdoeRF4io/view?usp=sharing)
 
 <div align="center">
 
@@ -277,3 +279,5 @@ open http://localhost:5305
 ![Escalation](https://img.shields.io/badge/Auto-Escalation-ef4444?style=for-the-badge)
 
 </div>
+
+
