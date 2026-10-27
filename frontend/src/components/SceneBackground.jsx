@@ -1,18 +1,22 @@
-// Ambient 3D scene — floating gradient orbs unique to this product's identity.
+// Ambient console scene for HostelHub
 export default function SceneBackground() {
   const orbs = [
-    { color: 'bg-teal-400/8', size: 'h-[26rem] w-[26rem]', pos: '-top-32 -left-24' },
-    { color: 'bg-cyan-400/8', size: 'h-[22rem] w-[22rem]', pos: 'top-1/3 -right-28' },
-    { color: 'bg-amber-500/6', size: 'h-[18rem] w-[18rem]', pos: '-bottom-20 left-1/4' },
+    { color: 'bg-teal2/10', size: 'h-[34rem] w-[40rem]', pos: '-top-36 right-1/4', dur: '16s', delay: '0s' },
+    { color: 'bg-teal-bright/6', size: 'h-[22rem] w-[22rem]', pos: 'bottom-0 left-1/4', dur: '20s', delay: '-4s' },
+    { color: 'bg-teal2/4', size: 'h-[14rem] w-[14rem]', pos: 'top-1/2 right-1/4', dur: '14s', delay: '-7s' },
   ];
   return (
     <div className="pointer-events-none fixed inset-0 overflow-hidden" aria-hidden="true">
       {orbs.map((o, i) => (
-        <div key={i} className={`absolute ${o.pos} ${o.size} ${o.color} rounded-full blur-[110px]`}
-          style={{ animation: `orbFloat ${12 + i * 3}s ease-in-out ${i * -4}s infinite alternate` }} />
+        <div key={i}
+          className={`blob absolute ${o.pos} ${o.size} ${o.color} rounded-full`}
+          style={{ animation: `orbFloat ${o.dur} ease-in-out ${o.delay} infinite` }}
+        />
       ))}
-      <div className="absolute inset-0 opacity-[0.03]"
-        style={{ backgroundImage: 'radial-gradient(circle, #14b8a6 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
+      <div
+        className="absolute inset-0 opacity-[0.018]"
+        style={{ backgroundImage: 'radial-gradient(circle, rgba(20,184,166,.8) 1px, transparent 1px)', backgroundSize: '40px 40px' }}
+      />
     </div>
   );
 }

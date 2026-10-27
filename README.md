@@ -1,176 +1,279 @@
-# HostelHub — Every complaint, on the clock
+<div align="center">
 
-Hostel maintenance tickets with **SLA timers and automatic escalation**: every
-complaint gets a resolution deadline by priority, a cron engine escalates
-breaches to the wardens, and every ticket carries a full status timeline.
+```
+██╗  ██╗ ██████╗ ███████╗████████╗███████╗██╗     ██╗  ██╗██╗   ██╗██████╗
+██║  ██║██╔═══██╗██╔════╝╚══██╔══╝██╔════╝██║     ██║  ██║██║   ██║██╔══██╗
+███████║██║   ██║███████╗   ██║   █████╗  ██║     ███████║██║   ██║██████╔╝
+██╔══██║██║   ██║╚════██║   ██║   ██╔══╝  ██║     ██╔══██║██║   ██║██╔══██╗
+██║  ██║╚██████╔╝███████║   ██║   ███████╗███████╗██║  ██║╚██████╔╝██████╔╝
+╚═╝  ╚═╝ ╚═════╝ ╚══════╝   ╚═╝   ╚══════╝╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚═════╝
+```
+
+### 🏠 *Hostel complaints — every one on the clock. Zero ignored.*
+
+<br/>
+
+![Version](https://img.shields.io/badge/version-1.0.0-14b8a6?style=for-the-badge)
+![Stack](https://img.shields.io/badge/stack-MERN-14b8a6?style=for-the-badge&logo=mongodb&logoColor=black)
+![SLA Engine](https://img.shields.io/badge/SLA%20Engine-Live-14b8a6?style=for-the-badge)
+![Roles](https://img.shields.io/badge/roles-Student%20%7C%20Warden%20%7C%20Admin-0d9488?style=for-the-badge)
+![License](https://img.shields.io/badge/license-MIT-14b8a6?style=for-the-badge)
+
+<br/>
+
+> **"A hostel complaint without an SLA is just a wish. HostelHub gives every one a deadline."**
+
+</div>
 
 ---
 
-## Problem Statement
+## 🏠 What is HostelHub?
 
-Hostel complaints live on sticky notes and WhatsApp and get forgotten. Water
-leaks wait a week because nobody tracks who owns what or when it was promised.
-HostelHub gives every ticket an SLA, auto-escalates breaches, and shows a
-public timeline so students always know where their complaint stands.
+**HostelHub** is a full-stack MERN hostel maintenance ticket management system with a built-in **SLA (Service Level Agreement) engine**. Every complaint submitted by a student is automatically assigned a resolution deadline based on priority — and a cron job escalates breaches directly to the warden.
 
-## Target Users
+No more "I submitted but nothing happened". HostelHub makes accountability visible to everyone.
 
-- **Students** raising and tracking complaints about their rooms and facilities.
-- **Wardens** triaging, assigning staff and being held to response times.
-- **Admins** watching aggregate health: statuses, resolution speeds, breaches.
+---
 
-## Solution
+## ✨ Features
 
-Students raise tickets (priority auto-suggested by category — plumbing and
-electrical default to high). Warden assignment starts the SLA clock: high 8h,
-medium 24h, low 72h. A cron job scans every 5 minutes: deadlines inside 2
-hours trigger reminders, breaches flip the ticket to `escalated` and notify
-every warden. Students can reopen within 72h of resolution; the SLA restarts
-shorter. Everything is stamped on an auditable timeline.
-
-## Key Features
-
-- **SLA engine** — priority-based deadlines; assignment starts the clock.
-- **Auto-escalation (cron)** — `node-cron` every 5 min, same `runSLAScan()`
-  exposed via `POST /api/jobs/run-sla` for demos/tests.
-- **Status timeline** — every event (created, assigned, comments, resolved,
-  reopened, escalated) recorded with actor, note and timestamp.
-- **Reopen window** — 72h after resolution, with reason; restarts an 8h SLA.
-- **Role-scoped views** — students see their tickets; wardens get a kanban
-  board and all tickets; admins get aggregate stats.
-
-## Tech Stack
-
-| Layer | Technology |
+| 🏷️ Feature | 📋 Description |
 |---|---|
-| Frontend | React 18, Vite, Tailwind CSS 4, React Router 6, Axios |
-| Backend | Node.js, Express 4, Mongoose 8, Zod, Multer (photos), node-cron |
-| Auth | JWT (7-day), bcryptjs, `student`/`warden`/`admin` roles, rate-limited auth |
-| Database | MongoDB (Atlas or local); `USE_MEMORY_DB=1` zero-config demo |
-| Tests | `node:test` + `mongodb-memory-server` (20 checks incl. SLA-scan tests) |
-| Deployment | Render (backend `render.yaml`) + Vercel (frontend `vercel.json`) |
+| 🎫 **Ticket Submission** | Students submit complaints with title, category, priority, room number |
+| ⏱️ **SLA Timers** | High = 8h, Medium = 24h, Low = 72h — auto-calculated from assignment |
+| ⚡ **Auto-Escalation** | Cron job (every 5 min) escalates approaching/breached SLAs to warden |
+| 📋 **Status Timeline** | Created → Assigned → In Progress → Resolved (or Reopened) — full audit trail |
+| 🔔 **Notifications** | Real-time alerts for status changes and escalations |
+| 👨‍💼 **Warden Kanban** | Board view: Open / Assigned / In Progress / Resolved columns |
+| 🔄 **Reopen Window** | 72h reopen window after resolution — students can push back |
+| 📊 **SLA Dashboard** | Live SLA health: healthy / warning / escalated counts |
 
-## Architecture
+---
 
-```text
-React SPA (Vercel) — list table + warden kanban + live SLA countdowns
-   │  axios + JWT bearer
-   ▼
-Express API (Render)
-   │   /api/tickets        create (multipart), role-scoped list/detail
-   │   ├─ assign           starts SLA clock (priority → hours)
-   │   ├─ status           in-progress / resolved (note required)
-   │   ├─ comments/reopen/feedback
-   │   /api/admin/stats    aggregate health (admin only)
-   │   /api/notifications  per-user inbox
-   ▼
-jobs/scheduler.js — runSLAScan(): breach→escalate, <2h→remind
-   │  (cron every 5 min; callable directly for tests)
-   ▼
-MongoDB: User · Ticket (timeline, SLA fields) · Notification
+## 🗺️ HostelHub Mindmap
+
+```mermaid
+mindmap
+  root((🏠 HostelHub))
+    Student
+      Submit Ticket
+        Title
+        Category
+          Electrical
+          Plumbing
+          WiFi
+          Cleaning
+          Other
+        Priority High/Med/Low
+        Room Number
+        Description
+      Track My Tickets
+        Status Timeline
+        SLA Countdown
+        Reopen if Needed
+      Notifications
+        Status Updates
+        Resolution Alerts
+    Warden
+      View All Tickets
+      Assign Tickets
+      Update Status
+      Kanban Board
+      SLA Dashboard
+      Escalation Alerts
+    Admin
+      Manage Users
+      System Config
+      Reports
+    SLA Engine
+      Priority Based SLA
+        High 8h
+        Medium 24h
+        Low 72h
+      Cron Every 5min
+        Warn Approaching
+        Escalate Breach
+      Notification Triggers
 ```
 
-## Major Workflows
+---
 
-1. **Raise a ticket** — category auto-sets priority; optional photo; room and
-   summary required; a human-readable code (HH-1042) is issued.
-2. **Warden triage** — assign to staff with one action; the SLA deadline is
-   computed and shown as a live countdown everywhere.
-3. **Automatic escalation** — the scheduler escalates breaches and notifies
-   wardens; approaching deadlines notify the student.
-4. **Resolve & reopen** — resolution requires a note; students rate 1–5 and
-   can reopen within 72h with a reason (SLA restarts at 8h).
-5. **Admin analytics** — counts by status, breached count, average resolution
-   hours per category.
+## ⏱️ SLA Lifecycle
 
-## Local Setup
+```mermaid
+stateDiagram-v2
+    [*] --> Open: 🎫 Ticket Submitted
+    Open --> Assigned: 👨‍💼 Warden Assigns
+    Assigned --> InProgress: 🔧 Work Started
+    InProgress --> Resolved: ✅ Fixed
+
+    Open --> Escalated: ⏰ SLA Breach (cron)
+    Assigned --> Escalated: ⏰ SLA Breach (cron)
+    Escalated --> Resolved: ✅ Fixed after escalation
+
+    Resolved --> Reopened: 🔄 Student reopens (within 72h)
+    Reopened --> InProgress: 🔧 Reassigned
+
+    Resolved --> Closed: ⏱️ 72h window expired
+    Closed --> [*]: 🗄️ Archived
+
+    note right of Escalated
+        Auto-triggered by
+        cron every 5 minutes
+        Notifies warden immediately
+    end note
+```
+
+---
+
+## ⚙️ SLA Engine Flow
+
+```mermaid
+flowchart TD
+    CRON[⏰ Cron Job\nEvery 5 minutes] --> SCAN[🔍 Scan All Open Tickets]
+    SCAN --> CHECK{Check SLA Status}
+    CHECK -->|Healthy| SKIP[✅ Skip — All Good]
+    CHECK -->|< 1h Remaining| WARN[⚡ Warn Warden]
+    CHECK -->|Deadline Passed| ESC[🚨 Auto-Escalate]
+    ESC --> NOTIF[🔔 Push Notification to Warden]
+    NOTIF --> STATUS[📋 Update ticket.status = escalated]
+    WARN --> NOTIF2[📧 SLA Warning Notification]
+
+    style CRON fill:#070d18,color:#14b8a6,stroke:#14b8a6
+    style ESC fill:#070d18,color:#ef4444,stroke:#ef4444
+    style NOTIF fill:#070d18,color:#14b8a6,stroke:#14b8a6
+```
+
+---
+
+## 🏗️ System Architecture
+
+```mermaid
+graph TB
+    subgraph FE["🖥️ Frontend (port 5305)"]
+        LS[Landing]
+        TS[Tickets List]
+        TD[Ticket Detail + Timeline]
+        KB[Warden Kanban]
+        NB[Notification Bell]
+    end
+    subgraph BE["⚙️ Backend (port 5105)"]
+        API[Express /api]
+        TR[/tickets]
+        NR[/notifications]
+        CRON[⏰ SLA Cron Engine]
+        UR[/users]
+    end
+    subgraph DB["🍃 MongoDB"]
+        TK[(Tickets)]
+        NT[(Notifications)]
+        TL[(Timeline Events)]
+        US[(Users)]
+    end
+
+    FE -->|Axios + JWT| BE
+    CRON -->|Every 5min| TK
+    CRON --> NT
+    TR --> TK
+    TR --> TL
+    NR --> NT
+
+    style FE fill:#070d18,color:#14b8a6,stroke:#14b8a6
+    style CRON fill:#050c15,color:#ef4444,stroke:#ef4444
+    style BE fill:#050c15,color:#14b8a6,stroke:#14b8a6
+    style DB fill:#030810,color:#14b8a6,stroke:#14b8a6
+```
+
+---
+
+## 📊 Data Model
+
+```mermaid
+erDiagram
+    USER {
+        string id PK
+        string name
+        string email
+        string role "student|warden|admin"
+        string roomNumber
+        string passwordHash
+    }
+    TICKET {
+        string id PK
+        string studentId FK
+        string assignedTo FK
+        string title
+        string category
+        string priority "high|medium|low"
+        string status
+        date slaDeadline
+        boolean escalated
+        date createdAt
+    }
+    TIMELINE_EVENT {
+        string id PK
+        string ticketId FK
+        string actorId FK
+        string action
+        string note
+        date timestamp
+    }
+    NOTIFICATION {
+        string id PK
+        string userId FK
+        string ticketId FK
+        string type
+        boolean read
+        date createdAt
+    }
+
+    USER ||--o{ TICKET : "submits"
+    USER ||--o{ TICKET : "assigned"
+    TICKET ||--o{ TIMELINE_EVENT : "has"
+    USER ||--o{ NOTIFICATION : "receives"
+```
+
+---
+
+## 🎨 Design Identity
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    HOSTELHUB PALETTE                        │
+├──────────────┬──────────────┬──────────────┬───────────────┤
+│  Console Dark│  Teal Bright │  Danger Red  │  Warn Amber   │
+│  #070d18     │  #14b8a6     │  #ef4444     │  #f59e0b      │
+│  ████████    │  ████████    │  ████████    │  ████████     │
+├──────────────┴──────────────┴──────────────┴───────────────┤
+│  Typography: Manrope (Display) + IBM Plex Mono (Code/Data)  │
+│  Aesthetic: Terminal console · SLA spine colors · dark ops  │
+└─────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 🚀 Quick Start
 
 ```bash
-# 1. Backend
-cd backend
-npm install
-npm test                       # 20-check suite (no database needed)
-
-# Zero-config demo:
-USE_MEMORY_DB=1 npm start      # API on http://localhost:5105 (SLA cron on)
-
-# Or with a real MongoDB:
-cp .env.example .env           # set MONGODB_URI + JWT_SECRET
-npm run seed
-npm start
-
-# 2. Frontend
-cd ../frontend
-npm install
-npm run dev                    # app on http://localhost:5305
+cd hostelhub/backend && cp .env.example .env && npm install && npm run dev
+cd hostelhub/frontend && npm install && npm run dev
+open http://localhost:5305
 ```
 
-**Demo credentials** (password `Demo@1234`): `dev@demo.com` (student),
-`warden@demo.com`, `admin@demo.com`. Seed includes 8 tickets across every
-status — one already escalated, one resolved awaiting feedback, one reopenable,
-one past its reopen window. Trigger a live scan with
-`curl -X POST localhost:5105/api/jobs/run-sla`.
+### 🎭 Demo Accounts
+| Role | Email | Password | Access |
+|------|-------|----------|--------|
+| 🎓 Student | `dev@demo.com` | `Demo@1234` | Submit & track tickets |
+| 🔑 Warden | `warden@demo.com` | `Demo@1234` | Full kanban + assign |
+| ⚙️ Admin | `admin@demo.com` | `Demo@1234` | System settings |
 
-## Environment Variables
+---
 
-### backend/.env
+<div align="center">
 
-| Name | Purpose |
-|---|---|
-| `PORT` | API port (default 5105) |
-| `MONGODB_URI` | MongoDB connection string (empty + `USE_MEMORY_DB=1` for demo mode) |
-| `USE_MEMORY_DB` | `1` = ephemeral in-memory MongoDB, auto-seeded on boot |
-| `JWT_SECRET` | Secret used to sign JWTs — long random string in production |
-| `CLIENT_ORIGIN` | Frontend origin allowed by CORS (default http://localhost:5305) |
+### 🏠 Every complaint has a deadline. Every deadline has a consequence.
 
-### frontend/.env
+![SLA](https://img.shields.io/badge/SLA-Auto%20Enforced-14b8a6?style=for-the-badge)
+![Escalation](https://img.shields.io/badge/Auto-Escalation-ef4444?style=for-the-badge)
 
-| Name | Purpose |
-|---|---|
-| `VITE_API_URL` | Backend API base URL (default http://localhost:5105/api) |
-
-## API Overview
-
-| Method & path | Purpose |
-|---|---|
-| `POST /api/auth/register` · `POST /api/auth/login` · `GET /api/auth/me` | Auth (student/warden) |
-| `POST /api/tickets` · `GET /api/tickets?status&category` · `GET /api/tickets/:id` | Tickets (role-scoped) |
-| `PATCH /api/tickets/:id/assign` | Warden triage — starts SLA clock |
-| `PATCH /api/tickets/:id/status` | in-progress / resolved (warden) |
-| `POST /api/tickets/:id/comments` · `POST …/reopen` · `POST …/feedback` | Lifecycle |
-| `GET /api/admin/stats` | Aggregate analytics (admin) |
-| `GET /api/notifications` · `POST /api/notifications/read` | Notification inbox |
-| `POST /api/jobs/run-sla` | Manual SLA scan (demo/test) |
-| `GET /api/health` | Health probe |
-
-## Deployment
-
-- **Backend**: Render web service from `backend/render.yaml`; set `MONGODB_URI`,
-  `JWT_SECRET`, `CLIENT_ORIGIN`; health check `/api/health`. The cron scheduler
-  starts with the server — Render free web services stay warm enough for a
-  5-minute cadence; for stricter timing use a cron job service calling
-  `POST /api/jobs/run-sla` with an admin token.
-- **Frontend**: Vercel from `frontend/` (SPA rewrite); set `VITE_API_URL`.
-
-Live links: backend — [add URL] · frontend — [add URL]
-
-## Error Handling & Security
-
-- Zod validation on every route; status transitions are guarded (cannot assign
-  a resolved ticket, cannot resolve without a note, cannot reopen past 72h).
-- Role checks on every mutating route; students are query-scoped to their own
-  tickets and 403 on others' details.
-- bcrypt(12) hashing, no account enumeration, rate-limited auth, 7-day JWTs.
-- Frontend handles loading/empty/error/success states; live countdown chips;
-  toasts on every mutation; 401 auto-logout.
-
-- **Announcement board** — wardens broadcast (pinnable) notices every student sees.
-- **Ticket CSV export** — the full ledger, one click, spreadsheet-ready.
-- **Satisfaction analytics** — average rating per category on top of resolution speed.
-
-## Roadmap
-
-- Staff accounts with their own queues.
-- Push notifications (email/webhook) on escalation.
-- Photo attachments on resolution for proof-of-work.
-- Monthly warden scorecards from the analytics data.
+</div>

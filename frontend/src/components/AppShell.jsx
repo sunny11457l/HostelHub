@@ -3,8 +3,8 @@ import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import client from '../api/client.js';
 import { useAuth } from '../context/AuthContext.jsx';
 
-const NAV = [
-  { to: '/tickets', label: 'Tickets', icon: '▤' },
+const NAV_ITEMS = [
+  { to: '/tickets', label: 'Tickets', icon: '🎫' },
 ];
 
 export default function AppShell() {
@@ -16,9 +16,9 @@ export default function AppShell() {
   useEffect(() => {
     let alive = true;
     const poll = () =>
-      client.get('/notifications').then((r) => {
-        if (alive) setUnread(r.data.filter((n) => !n.read).length);
-      }).catch(() => {});
+      client.get('/notifications')
+        .then(r => { if (alive) setUnread(r.data.filter(n => !n.read).length); })
+        .catch(() => {});
     poll();
     const t = setInterval(poll, 20000);
     return () => { alive = false; clearInterval(t); };
@@ -28,44 +28,94 @@ export default function AppShell() {
 
   return (
     <div className="flex min-h-screen">
-      <aside className={`fixed inset-y-0 left-0 z-40 w-60 transform bg-console text-slate-300 transition-transform lg:static lg:translate-x-0 ${open ? 'translate-x-0' : '-translate-x-full'}`}>
-        <div className="flex h-16 items-center gap-2 px-5 font-extrabold text-white">
-          <span className="grid h-8 w-8 place-items-center rounded-lg bg-teal2 text-sm text-console">HH</span>
-          HostelHub
+      {/* Sidebar */}
+      <aside className={`fixed inset-y-0 left-0 z-40 flex w-64 flex-col border-r border-console-edge bg-console-mid transition-transform duration-300 lg:static lg:translate-x-0 ${open ? 'translate-x-0' : '-translate-x-full'}`}>
+        {/* Logo */}
+        <div className="flex h-16 items-center gap-3 border-b border-console-edge px-5">
+          <div className="grid h-9 w-9 place-items-center rounded-xl bg-teal-bright text-console text-sm font-black teal-glow">HH</div>
+          <span className="text-lg font-extrabold text-white">HostelHub</span>
         </div>
-        <nav className="mt-4 space-y-1 px-3">
-          {NAV.map((n) => (
-            <NavLink key={n.to} to={n.to} onClick={() => setOpen(false)}
-              className={({ isActive }) => `flex items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-bold ${isActive ? 'bg-teal2 text-console' : 'hover:bg-console-edge hover:text-white'}`}>
-              <span>{n.icon}</span> {n.label}
+
+        {/* Nav */}
+        <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-4">
+          {NAV_ITEMS.map(n => (
+            <NavLink
+              key={n.to}
+              to={n.to}
+              onClick={() => setOpen(false)}
+              className={({ isActive }) =>
+                `flex items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-bold transition-all ${
+                  isActive
+                    ? 'bg-teal-bright/15 text-teal-bright border border-teal-bright/20'
+                    : 'text-slate-400 hover:bg-console-edge hover:text-white'
+                }`
+              }
+            >
+              <span>{n.icon}</span>
+              {n.label}
             </NavLink>
           ))}
+
           {isStaff && (
-            <a href="#" onClick={(e) => e.preventDefault()} className="flex items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-bold text-slate-500">
-              <span>▦</span> Warden board <span className="ml-auto mono text-[10px]">kanban below</span>
-            </a>
+            <div className="mt-4 border-t border-console-edge pt-4">
+              <p className="mono mb-2 px-4 text-[10px] uppercase tracking-widest text-slate-600">Staff</p>
+              <NavLink
+                to="/tickets"
+                className={({ isActive }) =>
+                  `flex items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-bold transition-all ${
+                    isActive ? 'bg-teal-bright/15 text-teal-bright' : 'text-slate-400 hover:bg-console-edge hover:text-white'
+                  }`
+                }
+              >
+                <span>📋</span> Warden Board
+              </NavLink>
+            </div>
           )}
         </nav>
-        <div className="absolute bottom-4 w-full px-5 text-xs text-slate-500">
-          <p className="font-bold text-slate-300">{user?.name}</p>
-          <p>{user?.role}{user?.room ? ` · ${user.room}` : ''}</p>
-          <button onClick={() => { logout(); navigate('/'); }} className="mt-2 rounded-lg border border-slate-700 px-3 py-1.5 font-bold text-slate-300 hover:border-teal2">Log out</button>
-        </div>
-      </aside>
-      {open && <div className="fixed inset-0 z-30 bg-black/50 lg:hidden" onClick={() => setOpen(false)} />}
 
-      <div className="flex-1">
-        <header className="sticky top-0 z-20 flex h-14 items-center justify-between border-b border-slate-200 bg-white/90 px-4 backdrop-blur lg:hidden">
-          <button onClick={() => setOpen(true)} className="rounded-lg border border-slate-200 px-3 py-1.5 font-bold">☰</button>
-          <span className="font-extrabold">HostelHub</span>
-          <span className="rounded-full bg-teal2/10 px-3 py-1 text-xs font-extrabold text-teal-700">{unread} alerts</span>
-        </header>
+        {/* Notification banner */}
         {unread > 0 && (
-          <div className="hidden items-center justify-between bg-teal2/10 px-6 py-2 text-sm font-bold text-teal-800 lg:flex">
-            <span>🔔 {unread} unread notification{unread === 1 ? '' : 's'}</span>
-            <button onClick={async () => { await client.post('/notifications/read', {}); setUnread(0); }} className="underline">Mark all read</button>
+          <div className="mx-3 mb-2 rounded-xl bg-teal-bright/10 border border-teal-bright/20 p-3">
+            <p className="text-xs font-bold text-teal-bright">🔔 {unread} notification{unread !== 1 ? 's' : ''}</p>
+            <button
+              onClick={async () => { await client.post('/notifications/read', {}); setUnread(0); }}
+              className="mt-1 text-[10px] font-semibold text-teal-bright/60 underline"
+            >Mark all read</button>
           </div>
         )}
+
+        {/* User info */}
+        <div className="border-t border-console-edge p-4">
+          <div className="mb-2 rounded-xl bg-console-edge p-3">
+            <p className="text-sm font-bold text-white">{user?.name}</p>
+            <p className="mono mt-0.5 text-[10px] text-slate-500">{user?.role}{user?.room ? ` · Room ${user.room}` : ''}</p>
+          </div>
+          <button
+            onClick={() => { logout(); navigate('/'); }}
+            className="w-full rounded-xl border border-console-edge py-2 text-sm font-bold text-slate-400 transition hover:border-teal-bright/40 hover:text-teal-bright"
+          >
+            Log out
+          </button>
+        </div>
+      </aside>
+
+      {/* Mobile overlay */}
+      {open && <div className="fixed inset-0 z-30 bg-black/60 backdrop-blur-sm lg:hidden" onClick={() => setOpen(false)} />}
+
+      {/* Main content */}
+      <div className="flex flex-1 flex-col overflow-hidden">
+        {/* Mobile header */}
+        <header className="sticky top-0 z-20 flex h-14 items-center justify-between border-b border-console-edge bg-console/90 px-4 backdrop-blur lg:hidden">
+          <button onClick={() => setOpen(true)} className="rounded-xl border border-console-edge px-3 py-2 text-slate-400 hover:text-teal-bright">☰</button>
+          <div className="flex items-center gap-2">
+            <div className="grid h-7 w-7 place-items-center rounded-lg bg-teal-bright text-console text-xs font-black">HH</div>
+            <span className="font-extrabold text-white">HostelHub</span>
+          </div>
+          {unread > 0 ? (
+            <span className="rounded-full bg-teal-bright/15 px-3 py-1 text-xs font-extrabold text-teal-bright">{unread} 🔔</span>
+          ) : <span className="w-16" />}
+        </header>
+
         <Outlet />
       </div>
     </div>

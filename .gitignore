@@ -3,3 +3,13 @@ node_modules/
 dist/
 .DS_Store
 backend/uploads/
+# Protect environment secrets
+.env.*
+!.env.example
+
+# Frontend and backend dependencies
+frontend/node_modules/
+backend/node_modules/
+
+# Build outputs
+build/

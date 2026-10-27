@@ -3,6 +3,12 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useToast } from '../context/ToastContext.jsx';
 
+const DEMO_ROLES = [
+  { email: 'dev@demo.com', label: 'Student', icon: '🎓' },
+  { email: 'warden@demo.com', label: 'Warden', icon: '🔑' },
+  { email: 'admin@demo.com', label: 'Admin', icon: '⚙️' },
+];
+
 export default function Login() {
   const { login } = useAuth();
   const toast = useToast();
@@ -10,6 +16,7 @@ export default function Login() {
   const [form, setForm] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
+  const fillDemo = (email) => { setForm({ email, password: 'Demo@1234' }); setError(''); };
 
   async function submit(e) {
     e.preventDefault();
@@ -28,24 +35,95 @@ export default function Login() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-console px-4">
-      <div className="w-full max-w-sm">
-        <div className="mb-6 text-center">
-          <span className="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-teal2 text-xl font-extrabold text-console">HH</span>
-          <h1 className="mt-3 text-2xl font-extrabold text-white">Console login</h1>
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-console px-4">
+      {/* Orbs */}
+      <div className="pointer-events-none fixed inset-0" aria-hidden="true">
+        <div className="blob absolute -top-32 right-1/3 h-[28rem] w-[36rem] rounded-full bg-teal2/10" style={{ animation: 'orbFloat 16s ease-in-out infinite' }} />
+        <div className="blob absolute bottom-0 left-1/4 h-[18rem] w-[18rem] rounded-full bg-teal-bright/6" style={{ animation: 'orbFloat 20s ease-in-out 3s infinite' }} />
+      </div>
+
+      <div className="relative w-full max-w-md">
+        {/* Logo */}
+        <div className="mb-8 text-center">
+          <Link to="/" className="inline-flex items-center gap-3">
+            <div className="grid h-11 w-11 place-items-center rounded-2xl bg-teal-bright text-console text-sm font-black teal-glow">HH</div>
+            <span className="text-xl font-extrabold text-white">HostelHub</span>
+          </Link>
+          <h1 className="mt-6 text-3xl font-extrabold text-white">Console login</h1>
+          <p className="mt-2 text-sm text-slate-500">Jump into a seeded workspace</p>
         </div>
-        <form onSubmit={submit} className="space-y-4 rounded-2xl border border-slate-800 bg-slate-900/70 p-6">
-          {error && <p className="rounded-xl bg-red-500/10 px-3 py-2 text-sm font-bold text-red-300">{error}</p>}
-          <label className="block"><span className="text-sm font-bold text-slate-300">Email</span>
-            <input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} autoComplete="email"
-              className="mt-1 w-full rounded-xl border border-slate-700 bg-console px-3 py-2.5 text-white outline-none focus:border-teal2" /></label>
-          <label className="block"><span className="text-sm font-bold text-slate-300">Password</span>
-            <input type="password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} autoComplete="current-password"
-              className="mt-1 w-full rounded-xl border border-slate-700 bg-console px-3 py-2.5 text-white outline-none focus:border-teal2" /></label>
-          <button disabled={busy} className="w-full rounded-xl bg-teal2 py-2.5 font-extrabold text-console disabled:opacity-60">{busy ? 'Checking…' : 'Log in'}</button>
-          <p className="text-center text-sm text-slate-400">No account? <Link to="/register" className="font-extrabold text-teal2">Register</Link></p>
+
+        <form onSubmit={submit} className="console-card space-y-5 rounded-3xl border border-console-edge p-8">
+          {/* Role quick-fill */}
+          <div className="grid grid-cols-3 gap-2">
+            {DEMO_ROLES.map(({ email, label, icon }) => (
+              <button
+                key={email}
+                type="button"
+                onClick={() => fillDemo(email)}
+                className={`flex flex-col items-center gap-1 rounded-2xl border px-2 py-3 text-center text-xs transition hover:border-teal-bright/50 hover:bg-teal-bright/8 ${form.email === email ? 'border-teal-bright/60 bg-teal-bright/12 text-teal-bright' : 'border-console-edge text-slate-400'}`}
+              >
+                <span className="text-base">{icon}</span>
+                <span className="font-bold">{label}</span>
+              </button>
+            ))}
+          </div>
+
+          {error && (
+            <div className="flex items-center gap-2 rounded-xl border border-danger/25 bg-danger/8 px-4 py-3">
+              <span className="text-danger">⚠</span>
+              <p className="text-sm font-bold text-danger">{error}</p>
+            </div>
+          )}
+
+          <label className="block">
+            <span className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-slate-500">Email</span>
+            <input
+              type="email"
+              value={form.email}
+              onChange={e => setForm({ ...form, email: e.target.value })}
+              autoComplete="email"
+              placeholder="you@hostel.edu"
+              className="input-dark w-full rounded-xl px-4 py-3 text-sm"
+            />
+          </label>
+
+          <label className="block">
+            <span className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-slate-500">Password</span>
+            <input
+              type="password"
+              value={form.password}
+              onChange={e => setForm({ ...form, password: e.target.value })}
+              autoComplete="current-password"
+              placeholder="••••••••"
+              className="input-dark w-full rounded-xl px-4 py-3 text-sm"
+            />
+          </label>
+
+          <button
+            type="submit"
+            disabled={busy}
+            className="btn-3d btn-teal w-full rounded-2xl py-3.5 text-sm font-extrabold disabled:opacity-50"
+          >
+            {busy ? (
+              <span className="flex items-center justify-center gap-2">
+                <span className="h-4 w-4 animate-spin rounded-full border-2 border-console border-t-teal-bright" />
+                Checking…
+              </span>
+            ) : 'Open Console →'}
+          </button>
+
+          <p className="text-center text-sm text-slate-500">
+            No account?{' '}
+            <Link to="/register" className="font-extrabold text-teal-bright hover:underline">
+              Register
+            </Link>
+          </p>
         </form>
-        <p className="mt-4 text-center text-xs text-slate-500">Demo: dev@demo.com (student) · warden@demo.com · admin@demo.com · Demo@1234</p>
+
+        <p className="mono mt-5 text-center text-xs text-slate-600">
+          Demo password: <span className="text-slate-400">Demo@1234</span>
+        </p>
       </div>
     </div>
   );
